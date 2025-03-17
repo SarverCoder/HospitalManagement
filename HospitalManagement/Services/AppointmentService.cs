@@ -1,0 +1,40 @@
+﻿using HospitalManagement.appsettingsModel;
+using HospitalManagement.Dtos;
+using HospitalManagement.Repository.Interfaces;
+using Microsoft.Extensions.Options;
+
+namespace HospitalManagement.Services;
+
+public interface IAppointmentService
+{
+    bool CanCancelAppointment(DateTime appointmentTime);
+
+    Task CreateAppointment(ArrangeAppointmentDto appointmentDto);
+}
+public class AppointmentService : IAppointmentService
+{
+    private readonly IAppointmentRepository _appointmentRepository;
+    private readonly AppointmentSettings _options;
+
+    public AppointmentService(IAppointmentRepository appointmentRepository,
+        IOptions<AppointmentSettings> options)
+    {
+        _appointmentRepository = appointmentRepository;
+        _options = options.Value;
+    }
+
+
+    public bool CanCancelAppointment(DateTime appointmentTime)
+    {
+        TimeSpan timeRemaining = appointmentTime - DateTime.Now;
+        return timeRemaining.TotalHours > _options.CancellationDeadlineHours;
+    }
+
+    public async Task CreateAppointment(ArrangeAppointmentDto appointmentDto)
+    {
+        var appointment = appointmentDto.ToAppointment();
+
+        await _appointmentRepository.AddAsync(appointment);
+        await _appointmentRepository.SaveChangesAsync();
+    }
+}
