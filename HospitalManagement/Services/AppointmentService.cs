@@ -1,4 +1,6 @@
-﻿using HospitalManagement.appsettingsModel;
+﻿using AutoMapper;
+using HospitalManagement.appsettingsModel;
+using HospitalManagement.DataAccess.Entities;
 using HospitalManagement.Dtos;
 using HospitalManagement.Repository.Interfaces;
 using Microsoft.Extensions.Options;
@@ -10,18 +12,24 @@ public interface IAppointmentService
     bool CanCancelAppointment(DateTime appointmentTime);
 
     Task CreateAppointment(ArrangeAppointmentDto appointmentDto);
+
+    
 }
 public class AppointmentService : IAppointmentService
 {
     private readonly IAppointmentRepository _appointmentRepository;
     private readonly AppointmentSettings _options;
+    private readonly IMapper _mapper;
 
     public AppointmentService(IAppointmentRepository appointmentRepository,
-        IOptions<AppointmentSettings> options)
+        IOptionsSnapshot<AppointmentSettings> options, IMapper mapper)
     {
         _appointmentRepository = appointmentRepository;
+        _mapper = mapper;
         _options = options.Value;
     }
+
+
 
 
     public bool CanCancelAppointment(DateTime appointmentTime)
@@ -37,4 +45,6 @@ public class AppointmentService : IAppointmentService
         await _appointmentRepository.AddAsync(appointment);
         await _appointmentRepository.SaveChangesAsync();
     }
+
+  
 }

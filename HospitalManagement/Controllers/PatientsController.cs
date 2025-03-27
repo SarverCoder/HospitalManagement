@@ -14,16 +14,28 @@ namespace HospitalManagement.Controllers
     {
         private readonly ILogger<PatientsController> _logger;
         private readonly IAppointmentService _appointmentService;
+        private readonly IPatientService _patientService;
         private readonly DoctorSettings _doctorTime;
 
         public PatientsController(
-            IOptions<DoctorSettings> doctorTime,
+            IOptionsSnapshot<DoctorSettings> doctorTime,
             ILogger<PatientsController> _logger,
-            IAppointmentService appointmentService)
+            IAppointmentService appointmentService,
+            IPatientService patientService)
         {
             this._logger = _logger;
             _appointmentService = appointmentService;
+            _patientService = patientService;
             _doctorTime = doctorTime.Value;
+        }
+
+
+        [HttpGet]
+        public IActionResult GetAllPatients()
+        {
+            var patients = _patientService.GetAllPatients();
+
+            return Ok(patients);
         }
 
         [HttpPost]

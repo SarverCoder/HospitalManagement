@@ -1,10 +1,13 @@
+using System.Reflection;
 using HospitalManagement.appsettingsModel;
 using HospitalManagement.DataAccess;
 using HospitalManagement.DataAccess.Entities;
+using HospitalManagement.Middlewares;
 using HospitalManagement.Repository;
 using HospitalManagement.Repository.Interfaces;
 using HospitalManagement.Services;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,17 +18,35 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Added Serilog
 
 var configuration = builder.Configuration;
 
-builder.Services.Configure<DoctorSettings>(configuration.GetSection("DoctorsSettings"));
+builder.Services.AddSerilog((serviceProvider, loggerConfiguration) =>
+{
+    loggerConfiguration.ReadFrom.Configuration(configuration);
+});
 
-builder.Services.Configure<FileStorage>(configuration.GetSection("FileStorage"));
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.Configure<DoctorSettings>(configuration.GetSection("DoctorsSettings"));
 
 builder.Services.Configure<AppointmentSettings>(configuration.GetSection("AppointmentSettings"));
 
+// second way to configure
+
+builder.Services.AddOptions<FileStorage>()
+    .Bind(configuration.GetSection("FileStorage"))
+    .ValidateDataAnnotations();
+
+
+
+
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+
+builder.Services.AddScoped<IPatientRepository, PatientRepository>();
+builder.Services.AddScoped<IPatientService, PatientService>();
 
 builder.Services.AddDbContext<HospitalContext>(options =>
 {
@@ -44,6 +65,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 

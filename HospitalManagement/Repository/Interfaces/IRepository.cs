@@ -8,7 +8,7 @@
         void Delete(TEntity entity);
         TEntity GetById(int id);
         Task<TEntity> GetByIdAsync(int id);
-        IQueryable GetAll();
+        IQueryable<TEntity> GetAll();
         Task<IQueryable> GetAllAsync();
 
         Task<int> SaveChangesAsync();

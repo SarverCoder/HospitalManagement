@@ -37,7 +37,7 @@ namespace HospitalManagement.Repository
             return await context.Set<TEntity>().FindAsync(id);
         }
 
-        public IQueryable GetAll()
+        public IQueryable<TEntity> GetAll()
         {
           return context.Set<TEntity>().AsQueryable();
         }
