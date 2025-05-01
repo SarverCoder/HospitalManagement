@@ -13,7 +13,8 @@ public interface IAppointmentService
 
     Task CreateAppointment(ArrangeAppointmentDto appointmentDto);
 
-    
+    Task<string> ScheduleAppointments(int doctorId, int patientId, DateTime appointmentDate);
+
 }
 public class AppointmentService : IAppointmentService
 {
@@ -46,5 +47,8 @@ public class AppointmentService : IAppointmentService
         await _appointmentRepository.SaveChangesAsync();
     }
 
-  
+    public async Task<string> ScheduleAppointments(int doctorId, int patientId, DateTime appointmentDate)
+    {
+        return await _appointmentRepository.SheduleAppointment(doctorId, patientId, appointmentDate);
+    }
 }

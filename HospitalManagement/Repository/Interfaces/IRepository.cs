@@ -10,7 +10,6 @@
         Task<TEntity> GetByIdAsync(int id);
         IQueryable<TEntity> GetAll();
         Task<IQueryable> GetAllAsync();
-
         Task<int> SaveChangesAsync();
         int SaveChanges();
 

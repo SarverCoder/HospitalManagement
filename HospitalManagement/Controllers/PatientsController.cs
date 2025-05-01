@@ -3,6 +3,7 @@ using HospitalManagement.Dtos;
 using HospitalManagement.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 
 
@@ -10,6 +11,7 @@ namespace HospitalManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[EnableRateLimiting("fixed")]
     public class PatientsController : ControllerBase
     {
         private readonly ILogger<PatientsController> _logger;
@@ -29,6 +31,18 @@ namespace HospitalManagement.Controllers
             _doctorTime = doctorTime.Value;
         }
 
+        [HttpGet("{patientId}")]
+        public async Task<IActionResult> GetByIdFromCache(int patientId)
+        {
+            var patient = await _patientService.GetCachePatientById(patientId);
+
+            if (patient != null)
+            {
+                return Ok(patient);
+            }
+
+            return NotFound($"Patient with ID {patientId} not found.");
+        }
 
         [HttpGet]
         public IActionResult GetAllPatients()

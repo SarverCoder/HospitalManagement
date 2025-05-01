@@ -11,8 +11,8 @@ public class MappingProfile : Profile
         CreateMap<Doctor, DoctorDto>()
             .ForMember(dest => dest.FullName,
                 opt =>
-                    opt.MapFrom(src => $"{src.Firstname} {src.Lastname}"))
-            .ReverseMap();
+                    opt.MapFrom(src => $"{src.Firstname} {src.Lastname}"));
+           
 
         CreateMap<Patient, PatientDto>()
             .ForMember(dest => dest.FullName,

@@ -7,7 +7,7 @@
         public bool IsActive { get; set; }
 
         public DateTime AppointmentDate { get; set; }
-
+        public TimeSpan Duration { get; set; }
         public int PatientId { get; set; }
 
         public Patient Patient { get; set; }
