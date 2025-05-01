@@ -133,6 +133,8 @@ rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
 
 });
 
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(Program)));
+
 
 
 var app = builder.Build();
