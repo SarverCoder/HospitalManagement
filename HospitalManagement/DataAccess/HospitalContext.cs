@@ -15,6 +15,7 @@ namespace HospitalManagement.DataAccess
         public DbSet<Patient> Patients { get; set; }
         public DbSet<PatientBlank> PatientBlanks { get; set; }
         public DbSet<Speciality> Specialities { get; set; }
+        public DbSet<Room> Rooms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

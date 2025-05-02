@@ -1,7 +1,12 @@
 using System.Reflection;
 using System.Threading.RateLimiting;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using HospitalManagement.Application.Commands.CreateDoctor;
+using HospitalManagement.Application.Commands.CreateRoom;
 using HospitalManagement.appsettingsModel;
 using HospitalManagement.DataAccess;
+using HospitalManagement.Extensions;
 using HospitalManagement.RedisCacheService;
 using HospitalManagement.Repository;
 using HospitalManagement.Repository.Interfaces;
@@ -32,18 +37,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMemoryCache();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
+var configuration = builder.Configuration;
 
-        });
+builder.Services.AddCorsConfiguration();
 
-});
 
 
 #region RedisConfiguration    
@@ -58,7 +55,6 @@ builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
 
 // Added Serilog
 
-var configuration = builder.Configuration;
 
 builder.Services.AddSerilog((serviceProvider, loggerConfiguration) =>
 {
@@ -88,6 +84,9 @@ builder.Services.AddScoped<IPatientService, PatientService>();
 
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
+
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+
 
 builder.Services.AddDbContext<HospitalContext>(options =>
 {
@@ -133,7 +132,12 @@ rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
 
 });
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(Program)));
+builder.Services.AddMediatR(cfg 
+    => cfg.RegisterServicesFromAssemblyContaining(typeof(Program)));
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateDoctorDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateRoomDtoValidator>();
 
 
 

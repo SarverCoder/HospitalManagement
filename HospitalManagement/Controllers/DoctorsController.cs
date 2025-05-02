@@ -1,5 +1,7 @@
-﻿using HospitalManagement.Application.Queries.GetDoctors;
+﻿using HospitalManagement.Application.Commands.CreateDoctor;
+using HospitalManagement.Application.Queries.GetDoctors;
 using HospitalManagement.DataAccess.Entities;
+using HospitalManagement.Dtos;
 using HospitalManagement.Repository.Interfaces;
 using HospitalManagement.Services;
 using MediatR;
@@ -60,6 +62,17 @@ namespace HospitalManagement.Controllers
                 return Ok(result);
             }
             return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateDoctor([FromBody] CreateDoctorDto dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("Invalid doctor data.");
+            }
+            var doctorId = await _mediator.Send(new CreateDoctorCommand(dto));
+            return CreatedAtAction(nameof(GetDoctorById), new { doctorId }, dto);
         }
 
     }
