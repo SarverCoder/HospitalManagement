@@ -5,6 +5,7 @@ using HospitalManagement.Dtos;
 using HospitalManagement.Repository.Interfaces;
 using HospitalManagement.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -13,6 +14,7 @@ namespace HospitalManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     //[EnableRateLimiting("fixed")]
     public class DoctorsController : ControllerBase
     {

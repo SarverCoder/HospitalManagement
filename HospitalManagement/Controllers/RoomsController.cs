@@ -4,7 +4,6 @@ using HospitalManagement.Application.Commands.UpdateRoom;
 using HospitalManagement.Application.Queries.GetRooms;
 using HospitalManagement.Dtos;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalManagement.Controllers
@@ -103,4 +102,6 @@ namespace HospitalManagement.Controllers
 
 
     }
+
+
 }

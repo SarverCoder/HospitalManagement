@@ -5,12 +5,14 @@ using FluentValidation.AspNetCore;
 using HospitalManagement.Application.Commands.CreateDoctor;
 using HospitalManagement.Application.Commands.CreateRoom;
 using HospitalManagement.appsettingsModel;
+using HospitalManagement.Behaviors;
 using HospitalManagement.DataAccess;
 using HospitalManagement.Extensions;
 using HospitalManagement.RedisCacheService;
 using HospitalManagement.Repository;
 using HospitalManagement.Repository.Interfaces;
 using HospitalManagement.Services;
+using MediatR;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +42,7 @@ builder.Services.AddMemoryCache();
 var configuration = builder.Configuration;
 
 builder.Services.AddCorsConfiguration();
-
+builder.Services.AddJwtConfiguration();
 
 
 #region RedisConfiguration    
@@ -132,8 +134,16 @@ rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
 
 });
 
-builder.Services.AddMediatR(cfg 
-    => cfg.RegisterServicesFromAssemblyContaining(typeof(Program)));
+
+//builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
+
+builder.Services.AddMediatR(cfg
+    =>
+{
+    cfg.RegisterServicesFromAssemblyContaining(typeof(Program));
+ 
+});
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateDoctorDtoValidator>();
@@ -159,6 +169,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter(); // RateLimiter 

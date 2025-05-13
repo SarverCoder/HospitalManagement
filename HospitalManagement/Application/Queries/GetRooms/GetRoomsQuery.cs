@@ -18,7 +18,7 @@ public class GetRoomsQueryHandler(IRoomRepository repository, IMapper mapper)
 
         var roomDtos = mapper.Map<IEnumerable<RoomDto>>(rooms);
 
-        return roomDtos.OrderBy(x => x.Id);
+        return roomDtos;
 
     }
 }
